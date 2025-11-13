@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:salesforce="http://www.mulesoft.org/schema/mule/salesforce"
+	xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xmlns="http://www.mulesoft.org/schema/mule/core"
+	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/salesforce http://www.mulesoft.org/schema/mule/salesforce/current/mule-salesforce.xsd">
+	
+	<flow name="get:\contact:contact-specification-api-config">
+        <logger level="INFO" doc:name="Start Flow" doc:id="820ecc9f-e2b8-4481-9b2c-1f36bae78d37" message="-----------------------------Start Flow--------------"/>
+		<set-variable value="#[attributes.queryParams.FirstName]" doc:name="FirstNameValue" doc:id="553c138b-545f-4a9d-8217-438230e39a9b" variableName="FirstNameValue"/>
+		<salesforce:query doc:name="Query" doc:id="cfa04fcf-742d-4c31-ab88-8b21def198b9" config-ref="Salesforce_Config">
+			<salesforce:salesforce-query ><![CDATA[select LastName, FirstName, Email, Phone, Id from Contact where FirstName= :fname]]></salesforce:salesforce-query>
+			<salesforce:parameters ><![CDATA[#[output application/java
+---
+{
+	fname : vars.FirstNameValue
+}]]]></salesforce:parameters>
+		</salesforce:query>
+		<ee:transform doc:name="Transform Message">
+            <ee:message>
+                <ee:set-payload><![CDATA[%dw 2.0
+output application/json
+---
+payload]]></ee:set-payload>
+            </ee:message>
+        </ee:transform>
+		<logger level="INFO" doc:name="End Flow" doc:id="fd2e2ff7-bd30-4e05-9ea3-db371ff473c6" message="------------------get contact details---------------------#[payload]"/> 
+</flow>
+	</mule>

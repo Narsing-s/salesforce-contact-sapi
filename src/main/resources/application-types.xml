@@ -1,0 +1,26 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<types:mule xmlns:types="http://www.mulesoft.org/schema/mule/types">
+  <types:catalog>
+    <types:type name="contact-create" format="json">
+      <types:shape format="weave" example="examples/sample-create-contact.json"><![CDATA[%dw 2.0
+
+type contact_create = {|
+  FirstName: String, 
+  LastName: String, 
+  Email: String, 
+  Phone: String
+|} {"example": "{\\\"FirstName\\\":\\\"Somu\\\",\\\"LastName\\\":\\\"pasupureddi\\\",\\\"Email\\\":\\\"someshsomu041@gmail.com\\\",\\\"Phone\\\":\\\"709685489\\\"}"}
+
+]]></types:shape>
+    </types:type>
+  </types:catalog>
+  <types:enrichment select="#db5b19b7-abbb-409b-86dc-75c39232642c">
+    <types:processor-declaration>
+      <types:input-event>
+        <types:message>
+          <types:payload type="contact-create"/>
+        </types:message>
+      </types:input-event>
+    </types:processor-declaration>
+  </types:enrichment>
+</types:mule>

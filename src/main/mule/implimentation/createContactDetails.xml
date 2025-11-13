@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:tracking="http://www.mulesoft.org/schema/mule/ee/tracking"
+	xmlns:salesforce="http://www.mulesoft.org/schema/mule/salesforce" xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core"
+	xmlns="http://www.mulesoft.org/schema/mule/core"
+	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/salesforce http://www.mulesoft.org/schema/mule/salesforce/current/mule-salesforce.xsd
+http://www.mulesoft.org/schema/mule/ee/tracking http://www.mulesoft.org/schema/mule/ee/tracking/current/mule-tracking-ee.xsd">
+	<flow name="post:\contact:application\json:contact-specification-api-config">
+		<logger level="INFO" doc:name="Start Flow" doc:id="e452f6ab-b197-4cd2-8da1-bfd7af67f4f2" message="---------------------Start Flow----------------------"/>
+		<tracking:transaction doc:name="Set Transaction Id" doc:id="53c1e337-fbe3-488b-ba29-0937b2124daf" id="#[uuid()]"/>
+		<ee:transform doc:name="Transform Message" doc:id="db5b19b7-abbb-409b-86dc-75c39232642c" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/java
+---
+[{
+	LastName: payload.LastName,
+	FirstName: payload.FirstName,
+	Phone: payload.Phone,
+	Email: payload.Email
+}]]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+		<salesforce:create type="Contact" doc:name="Create" doc:id="762e2f8d-4bf9-4fce-b4ca-c4b6bfd50baa" config-ref="Salesforce_Config"/>
+		<ee:transform doc:name="Transform Message" doc:id="924cb1a8-c944-4898-af5e-7aff930322db">
+            <ee:message>
+                <ee:set-payload><![CDATA[%dw 2.0
+output application/json
+---
+payload]]></ee:set-payload>
+            </ee:message>
+        </ee:transform>
+		<logger level="INFO" doc:name="End Flow" doc:id="4b6ba7f6-2364-4811-8dd7-d6a0c82e542b" message="-----------contact created successfully---------------------#[payload]"/>
+    
+</flow>
+	
+	
+	</mule>

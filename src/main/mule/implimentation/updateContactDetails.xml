@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:salesforce="http://www.mulesoft.org/schema/mule/salesforce"
+	xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xmlns="http://www.mulesoft.org/schema/mule/core"
+	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/salesforce http://www.mulesoft.org/schema/mule/salesforce/current/mule-salesforce.xsd">
+	
+	<flow name="put:\contact:application\json:contact-specification-api-config">
+        <ee:transform doc:name="Transform Message" doc:id="c2913f5c-5ecd-454c-a717-b390a194d035" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/java
+---
+[{
+	Id: payload.Id,
+	LastName: payload.LastName,
+	FirstName: payload.FirstName
+}]]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+		<salesforce:update type="Contact" doc:name="Update" doc:id="382d8c2e-5d05-4d99-a36f-2e7e5e84d0d8" config-ref="Salesforce_Config"/>
+		<ee:transform doc:name="Transform Message">
+            <ee:message>
+                <ee:set-payload><![CDATA[%dw 2.0
+output application/json
+---
+payload]]></ee:set-payload>
+            </ee:message>
+        </ee:transform>
+		<logger level="INFO" doc:name="End Flow" doc:id="6a2fef5a-cd60-4330-95b4-7958bdf11da4" message="---------------Updated Successfully---------------#[payload]"/>
+    
+</flow>
+	
+	
+	</mule>
