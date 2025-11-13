@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:salesforce="http://www.mulesoft.org/schema/mule/salesforce"
+	xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xmlns="http://www.mulesoft.org/schema/mule/core"
+	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/salesforce http://www.mulesoft.org/schema/mule/salesforce/current/mule-salesforce.xsd">
+	
+	<flow name="delete:\contact:application\json:contact-specification-api-config">
+        <logger level="INFO" doc:name="Start Flow" doc:id="9191c1cd-9524-4546-b603-3ee00584bf0d" message="----------------Start Flow-----------------"/>
+		<salesforce:query doc:name="Query" doc:id="116ffc30-25dc-46d5-a747-73c911ab5993" config-ref="Salesforce_Config">
+			<salesforce:salesforce-query ><![CDATA[select FirstName, LastName, Id from contact where FirstName= :fname]]></salesforce:salesforce-query>
+			<salesforce:parameters ><![CDATA[#[output application/java
+---
+{
+	fname : attributes.queryParams.FirstName
+}]]]></salesforce:parameters>
+		</salesforce:query>
+		<ee:transform doc:name="Transform Message">
+            <ee:message>
+                <ee:set-payload><![CDATA[%dw 2.0
+output application/java
+---
+payload map{
+	id: $.Id
+}]]></ee:set-payload>
+            </ee:message>
+        </ee:transform>
+		<salesforce:delete doc:name="Delete" doc:id="93fc9aad-0aa8-4d69-9114-0bc96918035a" config-ref="Salesforce_Config">
+			<salesforce:ids ><![CDATA[#[payload.id]]]></salesforce:ids>
+		</salesforce:delete>
+		<ee:transform doc:name="Transform Message" doc:id="cc76a186-18a8-4ece-b77f-3825d15c7f46" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+payload]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+		<logger level="INFO" doc:name="End Flow" doc:id="4a1dbeed-47d8-4e09-acb6-4f2aba6b7dad" message="--------------contact deleted successfully-------------#[payload]"/>
+    
+</flow>
+	
+	
+	</mule>

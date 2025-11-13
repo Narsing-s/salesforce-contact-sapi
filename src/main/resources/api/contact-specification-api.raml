@@ -1,0 +1,69 @@
+#%RAML 1.0
+title: contact specification API
+description: This API is used to manage the contact object.
+
+/contact:
+  get:
+    queryParameters:
+      FirstName:
+    responses:
+      200:
+        body:
+          application/json:
+            example:
+              {
+                FirstName: "Test1",
+                LastName: "Test2"
+              }
+  post:
+    body:
+      application/json:
+        example:
+          {
+            FirstName: "Test1",
+            LastName: "Test2"
+          }
+    responses:
+      201:
+        body:
+          application/json:
+            example:
+              {
+                status: 201,
+                message: "contact created successfully"
+              }
+  put:
+    body:
+      application/json:
+        example:
+          {
+            FirstName: "Test1",
+            LastName: "Test2",
+            Id: "647036435"
+          }
+    responses:
+      204:
+        body:
+          application/json:
+            example:
+              {
+                status: "updated successfully"
+              }
+  delete:   
+    body:
+      application/json:
+        example:
+          {
+            FirstName: "Test1",
+            LastName: "Test2",
+            Id: "647036435"
+          }
+    responses:
+      200:
+        body:
+          application/json:
+            example:
+              {
+                status: "deleted successfully"
+              }
+
