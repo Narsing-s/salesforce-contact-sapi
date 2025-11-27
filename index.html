@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Contact API UI</title>
+    <style>
+        body { font-family: Arial; background:#f0f8ff; padding:20px; text-align:center; }
+        .container { width:500px; margin:auto; background:white; padding:20px; border-radius:10px; box-shadow:0 0 12px rgba(0,0,0,0.15);}
+        input { width:90%; padding:10px; margin-top:8px; border-radius:6px; border:1px solid #aaa; font-size:15px;}
+        button { padding:10px 20px; margin-top:10px; font-size:16px; border:none; border-radius:6px; cursor:pointer; background:#0078ff; color:white;}
+        button:hover { background:#005dc1;}
+        .success { background:#e5ffe5; border-left:6px solid green; padding:12px; margin-top:10px; text-align:left;}
+        .error { background:#ffe5e5; border-left:6px solid red; padding:12px; margin-top:10px; text-align:left;}
+        pre { background:#f2f2f2; padding:10px; border-radius:6px; text-align:left;}
+    </style>
+</head>
+<body>
+ 
+<h2>📇 Contact API UI</h2>
+ 
+<script>
+    const BASE_URL = "https://your-api-url/contact"; // ← Replace with your actual API URL
+</script>
+ 
+<!-- ====== GET Contact ====== -->
+<div class="container">
+    <h3>Get Contact</h3>
+    <input type="text" id="getFirstName" placeholder="Enter First Name"/>
+    <button onclick="getContact()">Search</button>
+    <div id="getResult"></div>
+</div>
+ 
+<script>
+async function getContact(){
+    const fname = document.getElementById("getFirstName").value.trim();
+    if(!fname){ alert("Please enter first name"); return;}
+    try{
+        const res = await fetch(`${BASE_URL}?FirstName=${fname}`);
+        const data = await res.json();
+        getResult.innerHTML = `<pre>${JSON.stringify(data,null,2)}</pre>`;
+    } catch(e){
+        getResult.innerHTML = `<div class="error">Unable to fetch contact</div>`;
+    }
+}
+</script>
+ 
+<!-- ====== POST Contact ====== -->
+<div class="container">
+    <h3>Create Contact</h3>
+    <input type="text" id="postFirstName" placeholder="First Name"/>
+    <input type="text" id="postLastName" placeholder="Last Name"/>
+    <button onclick="createContact()">Create</button>
+    <div id="postResult"></div>
+</div>
+ 
+<script>
+async function createContact(){
+    const body = {
+        FirstName: postFirstName.value,
+        LastName: postLastName.value
+    };
+    try{
+        const res = await fetch(BASE_URL, {
+            method:"POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(body)
+        });
+        const data = await res.json();
+        postResult.innerHTML = `<div class="success">${JSON.stringify(data)}</div>`;
+    } catch(e){
+        postResult.innerHTML = `<div class="error">Failed to create contact</div>`;
+    }
+}
+</script>
+ 
+<!-- ====== PUT Contact ====== -->
+<div class="container">
+    <h3>Update Contact</h3>
+    <input type="text" id="putId" placeholder="Contact ID"/>
+    <input type="text" id="putFirstName" placeholder="Update First Name"/>
+    <input type="text" id="putLastName" placeholder="Update Last Name"/>
+    <button onclick="updateContact()">Update</button>
+    <div id="putResult"></div>
+</div>
+ 
+<script>
+async function updateContact(){
+    const body = {
+        Id: putId.value,
+        FirstName: putFirstName.value,
+        LastName: putLastName.value
+    };
+    try{
+        const res = await fetch(BASE_URL, {
+            method:"PUT",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(body)
+        });
+        const data = await res.json();
+        putResult.innerHTML = `<div class="success">${JSON.stringify(data)}</div>`;
+    } catch(e){
+        putResult.innerHTML = `<div class="error">Failed to update contact</div>`;
+    }
+}
+</script>
+ 
+<!-- ====== DELETE Contact ====== -->
+<div class="container">
+    <h3>Delete Contact</h3>
+    <input type="text" id="deleteId" placeholder="Contact ID"/>
+    <button onclick="deleteContact()">Delete</button>
+    <div id="deleteResult"></div>
+</div>
+ 
+<script>
+async function deleteContact(){
+    const id = deleteId.value;
+    try{
+        const res = await fetch(`${BASE_URL}/${id}`, { method:"DELETE" });
+        const data = await res.json();
+        deleteResult.innerHTML = `<div class="success">${JSON.stringify(data)}</div>`;
+    } catch(e){
+        deleteResult.innerHTML = `<div class="error">Failed to delete contact</div>`;
+    }
+}
+</script>
+ 
+</body>
+</html>
+ 
